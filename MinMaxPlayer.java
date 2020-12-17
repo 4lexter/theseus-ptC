@@ -1,5 +1,5 @@
 /* CHANGES THAT MUST BE DONE
- * COMPLETE GETNEXTMOVE
+ * FIX PATH
  */
 
 import java.util.ArrayList;
@@ -99,13 +99,32 @@ public class MinMaxPlayer extends Player {
 	}
 	
 	public int[] getNextMove(int currentPos, int opponentCurrentPos) {
+		
+		//move selection
 		Node root = new Node();
 		root.setNodeBoard(board);
-		createMySubtree(currentPos, opponentCurrentPos, root, 1);
+		createMySubtree(currentPos, opponentCurrentPos, root, 2);
 		int result = chooseMinMaxMove(root);
+		
+		//path
+        int[] observation = seeAround(currentPos, opponentCurrentPos, result);
+        Integer[] tempArray = {result, 0, observation[0] - 1, observation[1] - 1, currentPos};
+        if(name.equals("Theseus") &&  evaluate(currentPos, opponentCurrentPos, result) == Double.POSITIVE_INFINITY){
+                tempArray[1] = 1;
+                //Set obtainable false
+                for(int i = 0; i<playerMap.getS(); ++i){
+                    if(playerMap.getSupplies()[i].getSupplyTileId() == board.getTiles()[currentPos].neighborTileId(result, board.getN())){
+                    	playerMap.getSupplies()[i].setObtainable(false);;
+                        break;
+                    }
+                }
+        }
+        path.add(tempArray);
+        
 		//movement
 		move(result);
 		
+		return new int[] {getX(), getY(), result}; //in form {x, y, die}
 	}
 	
 	public void createMySubtree(int currentPos, int opponentCurrentPos, Node root, int depth) {

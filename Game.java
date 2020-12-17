@@ -32,9 +32,9 @@ public class Game {
 		final int N = 15, S = 4, W = 100 + (int)(Math.random()*60), n = 100;
 		Board board = new Board(N, S, W);
 		board.createBoard();
-		HeuristicPlayer[] gamers = new HeuristicPlayer[2];
-		gamers[0] = new HeuristicPlayer(1, "Theseus", board, 0, 0, 0, new ArrayList<>(n), 3, true);
-		gamers[1] = new HeuristicPlayer(2, "Minotaur", board, 0, N/2, N/2,  new ArrayList<>(n), 0, false);
+		MinMaxPlayer[] gamers = new MinMaxPlayer[2];
+		gamers[0] = new MinMaxPlayer(1, "Theseus", board, 0, 0, 0, new ArrayList<>(n), 3, true);
+		gamers[1] = new MinMaxPlayer(2, "Minotaur", board, 0, N/2, N/2,  new ArrayList<>(n), 0, false);
 		int winnerIdx = -1;
 		do{
 
@@ -56,8 +56,8 @@ public class Game {
 						
 			//Theseus' turn
 
-			int die = gamers[0].getNextMove(N * gamers[0].getX() + gamers[0].getY(), N * gamers[1].getX() + gamers[1].getY());
-
+			int die = gamers[0].getNextMove(N * gamers[0].getX() + gamers[0].getY(), N * gamers[1].getX() + gamers[1].getY())[2];
+			
 			//Check if a supply was collected
 			if(gamers[0].move(die)[3] != -1){
 				gamers[0].setScore(gamers[0].getScore() + 1);
@@ -76,7 +76,7 @@ public class Game {
 			}
 						
 			//Minotaur's turn
-			die = gamers[1].getNextMove(N * gamers[1].getX() + gamers[1].getY(), N * gamers[0].getX() + gamers[0].getY());
+			die = gamers[1].getNextMove(N * gamers[1].getX() + gamers[1].getY(), N * gamers[0].getX() + gamers[0].getY())[2];
 			gamers[1].move(die);
 
 			//Check if Minotaur ran into Theseus
@@ -87,7 +87,7 @@ public class Game {
 			
 		}while(game.getRound() < n);		//n rounds -> 2n plays
 
-		gamers[0].statistics();
+		//gamers[0].statistics();
 
 		//Tie
 		if(game.getRound() == n && winnerIdx == -1) {
